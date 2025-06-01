@@ -7,7 +7,7 @@ try:
 except ModuleNotFoundError as e:
     raise ImportError("google-generativeai is not installed. Please install it with 'pip install google-generativeai'") from e
 
-# Load environment variables
+# Load environment variables from .env
 load_dotenv()
 
 # Configure Gemini API key
@@ -17,6 +17,7 @@ if not GEMINI_API_KEY:
 
 genai.configure(api_key=GEMINI_API_KEY)
 
+# Flask app setup for Vercel compatibility
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 
 @app.route("/")
@@ -57,5 +58,5 @@ def generate():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# ✅ This line is required for Vercel!
+# Required by Vercel to recognize the Flask app
 handler = app
