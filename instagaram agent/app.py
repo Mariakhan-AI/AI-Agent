@@ -5,9 +5,9 @@ from dotenv import load_dotenv
 try:
     import google.generativeai as genai
 except ModuleNotFoundError as e:
-    raise ImportError("google.generativeai is not installed. Please install it with 'pip install google-generativeai'") from e
+    raise ImportError("google-generativeai is not installed. Please install it with 'pip install google-generativeai'") from e
 
-# Load environment variables from .env
+# Load environment variables
 load_dotenv()
 
 # Configure Gemini API key
@@ -17,14 +17,12 @@ if not GEMINI_API_KEY:
 
 genai.configure(api_key=GEMINI_API_KEY)
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="../templates", static_folder="../static")
 
-# Route: Home page
 @app.route("/")
 def index():
     return render_template("index.html")
 
-# Route: Generate Instagram caption
 @app.route("/generate", methods=["POST"])
 def generate():
     data = request.json
@@ -35,7 +33,6 @@ def generate():
         return jsonify({"error": "Missing prompt or niche"}), 400
 
     try:
-        # Create custom prompt
         custom_prompt = (
             f"You are an expert Instagram marketer. "
             f"Write a short, viral, engaging Instagram caption for the '{niche}' niche. "
@@ -60,5 +57,5 @@ def generate():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# ✅ This line is required for Vercel!
+handler = app
