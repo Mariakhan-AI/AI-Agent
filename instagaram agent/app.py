@@ -17,8 +17,8 @@ if not GEMINI_API_KEY:
 
 genai.configure(api_key=GEMINI_API_KEY)
 
-# Flask app setup for Vercel compatibility
-app = Flask(__name__, template_folder="../templates", static_folder="../static")
+# Flask app setup for root directory (no api/ folder)
+app = Flask(__name__, template_folder="templates", static_folder="static")
 
 @app.route("/")
 def index():
