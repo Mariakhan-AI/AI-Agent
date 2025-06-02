@@ -1,33 +1,102 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>CaptionCraft ✨</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Instagram Caption Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            max-width: 600px;
+        }
+        label {
+            display: block;
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 0.5rem;
+            margin-top: 0.3rem;
+            font-size: 1rem;
+        }
+        #result {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f3f3f3;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        #error {
+            margin-top: 1rem;
+            color: red;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <h1>Instagram Caption Generator</h1>
     <form id="captionForm">
-        <input type="text" name="prompt" placeholder="What's your post about?" required>
-        <input type="text" name="niche" placeholder="Your niche (e.g. travel, tech)" required>
-        <button type="submit">Generate</button>
+        <label for="prompt">Topic or Idea</label>
+        <input type="text" id="prompt" name="prompt" placeholder="Enter your topic or idea" required />
+
+        <label for="niche">Niche</label>
+        <select id="niche" name="niche" required>
+            <option value="" disabled selected>Select a niche</option>
+            <option value="fitness">Fitness</option>
+            <option value="fashion">Fashion</option>
+            <option value="food">Food</option>
+            <option value="travel">Travel</option>
+            <option value="beauty">Beauty</option>
+            <option value="technology">Technology</option>
+            <!-- Add more niches as needed -->
+        </select>
+
+        <button type="submit">Generate Caption</button>
     </form>
-    <p id="result"></p>
+
+    <div id="error"></div>
+    <div id="result"></div>
 
     <script>
-        const form = document.getElementById("captionForm");
-        form.onsubmit = async (e) => {
+        const form = document.getElementById('captionForm');
+        const resultDiv = document.getElementById('result');
+        const errorDiv = document.getElementById('error');
+
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const data = {
-                prompt: form.prompt.value,
-                niche: form.niche.value
-            };
-            const res = await fetch("/generate", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            });
-            const json = await res.json();
-            document.getElementById("result").innerText = json.caption || json.error;
-        };
+            resultDiv.textContent = '';
+            errorDiv.textContent = '';
+
+            const prompt = form.prompt.value.trim();
+            const niche = form.niche.value;
+
+            if (!prompt || !niche) {
+                errorDiv.textContent = 'Please fill in both fields.';
+                return;
+            }
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt, niche }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.textContent = data.caption;
+                } else {
+                    errorDiv.textContent = data.error || 'Something went wrong.';
+                }
+            } catch (err) {
+                errorDiv.textContent = 'Network error. Please try again.';
+            }
+        });
     </script>
 </body>
 </html>
