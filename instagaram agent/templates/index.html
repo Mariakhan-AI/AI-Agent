@@ -1,129 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Your Personal AI Agent – CaptionCraft</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-    }
-    .container {
-      background: white;
-      padding: 2rem;
-      border-radius: 16px;
-      width: 100%;
-      max-width: 600px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-    label {
-      font-weight: 500;
-    }
-    input, select, button {
-      width: 100%;
-      padding: 0.75rem;
-      margin-top: 0.5rem;
-      margin-bottom: 1rem;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-    }
-    button {
-      background-color: #ff6b6b;
-      color: white;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    button:hover {
-      background-color: #ee5253;
-    }
-    #caption-box {
-      margin-top: 1rem;
-      background: #f7f7f7;
-      border: 1px dashed #ccc;
-      padding: 1rem;
-      border-radius: 10px;
-      white-space: pre-wrap;
-    }
-    #copyBtn {
-      background-color: #1dd1a1;
-    }
-    #copyBtn:hover {
-      background-color: #10ac84;
-    }
-  </style>
+    <title>CaptionCraft ✨</title>
 </head>
 <body>
-  <div class="container">
-    <h1>Your Personal AI Agent 🤖</h1>
+    <h1>Instagram Caption Generator</h1>
+    <form id="captionForm">
+        <input type="text" name="prompt" placeholder="What's your post about?" required>
+        <input type="text" name="niche" placeholder="Your niche (e.g. travel, tech)" required>
+        <button type="submit">Generate</button>
+    </form>
+    <p id="result"></p>
 
-    <label for="prompt">Topic:</label>
-    <input type="text" id="prompt" placeholder="E.g. Travel, Fitness, Startups..." />
-
-    <label for="niche">Select Niche:</label>
-    <select id="niche">
-      <option value="fashion">Fashion</option>
-      <option value="fitness">Fitness</option>
-      <option value="travel">Travel</option>
-      <option value="motivation">Motivation</option>
-      <option value="business">Business</option>
-      <option value="funny">Funny</option>
-    </select>
-
-    <button onclick="generateCaption()">Generate Caption</button>
-
-    <div id="caption-box" style="display:none;"></div>
-    <button id="copyBtn" onclick="copyCaption()" style="display:none;">📋 Copy Caption</button>
-  </div>
-
-  <script>
-    async function generateCaption() {
-      const prompt = document.getElementById("prompt").value.trim();
-      const niche = document.getElementById("niche").value;
-
-      if (!prompt) {
-        alert("Please enter a topic.");
-        return;
-      }
-
-      const res = await fetch("/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt, niche })
-      });
-
-      const data = await res.json();
-      const captionBox = document.getElementById("caption-box");
-      const copyBtn = document.getElementById("copyBtn");
-
-      if (data.caption) {
-        captionBox.style.display = "block";
-        copyBtn.style.display = "inline-block";
-        captionBox.textContent = data.caption;
-      } else {
-        captionBox.textContent = "❌ Error: " + (data.error || "Unknown error");
-        captionBox.style.display = "block";
-      }
-    }
-
-    function copyCaption() {
-      const text = document.getElementById("caption-box").textContent;
-      navigator.clipboard.writeText(text);
-      alert("Caption copied to clipboard!");
-    }
-  </script>
+    <script>
+        const form = document.getElementById("captionForm");
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const data = {
+                prompt: form.prompt.value,
+                niche: form.niche.value
+            };
+            const res = await fetch("/generate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+            const json = await res.json();
+            document.getElementById("result").innerText = json.caption || json.error;
+        };
+    </script>
 </body>
 </html>

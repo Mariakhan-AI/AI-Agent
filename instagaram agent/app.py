@@ -2,22 +2,22 @@ from flask import Flask, request, render_template, jsonify
 import os
 from dotenv import load_dotenv
 
-try:
-    import google.generativeai as genai
-except ModuleNotFoundError as e:
-    raise ImportError("google-generativeai is not installed. Please install it with 'pip install google-generativeai'") from e
-
-# Load environment variables from .env
+# Load environment variables
 load_dotenv()
 
-# Configure Gemini API key
+try:
+    import google.generativeai as genai
+except ModuleNotFoundError:
+    raise ImportError("Install with: pip install google-generativeai")
+
+# Set API key
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
-    raise EnvironmentError("GEMINI_API_KEY not set in environment variables.")
+    raise EnvironmentError("GEMINI_API_KEY is not set in .env or Vercel dashboard.")
 
 genai.configure(api_key=GEMINI_API_KEY)
 
-# Flask app setup for root directory (no api/ folder)
+# Create Flask app
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
 @app.route("/")
@@ -37,8 +37,7 @@ def generate():
         custom_prompt = (
             f"You are an expert Instagram marketer. "
             f"Write a short, viral, engaging Instagram caption for the '{niche}' niche. "
-            f"The topic is: '{prompt}'. "
-            f"Use a human tone, include emojis, and avoid hashtags."
+            f"Topic: '{prompt}'. Use emojis. Avoid hashtags."
         )
 
         model = genai.GenerativeModel(
@@ -52,11 +51,12 @@ def generate():
         )
 
         response = model.generate_content(custom_prompt)
-        caption = response.text.strip() if hasattr(response, 'text') else "Error: Invalid response format"
+        caption = response.text.strip() if hasattr(response, "text") else "❌ Invalid response"
+
         return jsonify({"caption": caption})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Required by Vercel to recognize the Flask app
+# Required for Vercel
 handler = app
