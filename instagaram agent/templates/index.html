@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Caption Craft AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .form-container {
+            padding: 40px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #405de6;
+            box-shadow: 0 0 0 3px rgba(64, 93, 230, 0.1);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #405de6, #833ab4);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(64, 93, 230, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 5px solid #405de6;
+        }
+        
+        .result h3 {
+            color: #405de6;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .caption-option {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 1px solid #e1e5e9;
+            position: relative;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #405de6;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #405de6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: #ffe6e6;
+            color: #d32f2f;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📸 Instagram Caption Craft AI</h1>
+            <p>Create engaging captions that boost your Instagram presence</p>
+        </div>
+        
+        <div class="form-container">
+            <form id="captionForm">
+                <div class="form-group">
+                    <label for="description">📝 Describe your post:</label>
+                    <textarea id="description" name="description" placeholder="Describe what your post is about (e.g., sunset at the beach, workout session, food photo, etc.)" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tone">🎭 Tone & Style:</label>
+                    <select id="tone" name="tone">
+                        <option value="casual">Casual & Friendly</option>
+                        <option value="professional">Professional</option>
+                        <option value="funny">Funny & Humorous</option>
+                        <option value="inspirational">Inspirational</option>
+                        <option value="trendy">Trendy & Hip</option>
+                        <option value="romantic">Romantic</option>
+                        <option value="motivational">Motivational</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="hashtags">🏷️ Include Hashtags:</label>
+                    <select id="hashtags" name="hashtags">
+                        <option value="yes">Yes, include relevant hashtags</option>
+                        <option value="no">No hashtags</option>
+                        <option value="minimal">Just a few hashtags</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="keywords">🔍 Keywords (optional):</label>
+                    <input type="text" id="keywords" name="keywords" placeholder="Enter keywords you want to include (comma-separated)">
+                </div>
+                
+                <button type="submit" class="btn" id="generateBtn">
+                    ✨ Generate Captions
+                </button>
+            </form>
+            
+            <div id="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('captionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const generateBtn = document.getElementById('generateBtn');
+            const resultDiv = document.getElementById('result');
+            
+            // Show loading state
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '🔄 Generating...';
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Crafting your perfect captions...</p>
+                </div>
+            `;
+            
+            try {
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData.entries());
+                
+                const response = await fetch('/generate_caption', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayCaptions(result.captions);
+                } else {
+                    throw new Error(result.error || 'Failed to generate captions');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '✨ Generate Captions';
+            }
+        });
+        
+        function displayCaptions(captions) {
+            const resultDiv = document.getElementById('result');
+            let html = '<div class="result"><h3>🎯 Your AI-Generated Captions</h3>';
+            
+            captions.forEach((caption, index) => {
+                html += `
+                    <div class="caption-option">
+                        <button class="copy-btn" onclick="copyToClipboard('${caption.replace(/'/g, "\\'")}', this)">📋 Copy</button>
+                        <strong>Option ${index + 1}:</strong><br><br>
+                        ${caption.replace(/\n/g, '<br>')}
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            resultDiv.innerHTML = html;
+        }
+        
+        function copyToClipboard(text, button) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.innerHTML;
+                button.innerHTML = '✅ Copied!';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
